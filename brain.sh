@@ -62,12 +62,18 @@ __brain_pw_edit () {
   local __brain_roots=$__brain_pw_roots __brain_suffix=$__brain_pw_suffix
   __brain_root_edit "$@"
 }
+__brain_session_dir=$__brain_roots[1]/vim
+__brain_session () {
+  local sess="$__brain_session_dir/$1.vim"
+  [[ -f "$sess" ]] || return 1
+  vim -S "$sess"
+}
 brain () {
   if [[ $# -eq 0 ]]; then
     echo "brain"
     echo "  e|edit <file>     search brain for lan.<file>/<file.lang an open it"
     echo "  n|new <file>      ???"
-    echo "  pw|intl <file>    search brain for <file>.pw"
+    echo "  pw <file>         search brain for <file>.pw"
     return 0
   fi
   local arg1="$1"
@@ -76,8 +82,10 @@ brain () {
     __brain_root_edit "$@"
   elif [[ "$arg1" =~ '^(g|grep)$' ]]; then
     greplang "$@"
-  elif [[ "$arg1" =~ '^(pw|intl)$' ]]; then
+  elif [[ "$arg1" =~ '^(pw)$' ]]; then
     __brain_pw_edit "$@"
+  elif [[ "$arg1" =~ '^(session)$' ]]; then
+    __brain_session "$@"
   elif [[ "$arg1" =~ '^(n|new)$' ]]; then
     echo "hippocampus: long term memory failure"
   fi
@@ -88,10 +96,14 @@ _echo_line () {
   echo "ctx=$context state=$state statedescr=$state_descr line=$line"
 }
 _brain_2nd () {
-  if [[ "$line" =~ '.*(pw|intl).*' ]]; then
-    _values 'intl files' $(ls $__brain_pw_roots/*.pw\
+  if [[ "$line" =~ '.*(pw).*' ]]; then
+    _values 'pw files' $(ls $__brain_pw_roots/*.pw\
       |sed -e "s,$__brain_pw_roots/,,g"\
       |sed -e "s,\(.*\).pw,\1,g")
+  elif [[ "$line" =~ '.*(session).*' ]]; then
+    _values 'sessions' $(ls $__brain_session_dir/*.vim\
+      |sed -e "s,$__brain_session_dir/,,g"\
+      |sed -e "s,\(.*\).vim,\1,g")
   else
     #_echo_line
   fi
@@ -99,6 +111,7 @@ _brain_2nd () {
 _brain () {
   local context state state_descr line
   typeset -A opt_args
-  _arguments ":operation:(edit grep intl pw)" ":subject:_brain_2nd"
+  #local operations=(":edit:edit brain's content" ":grep:" ":pw:")
+  _arguments ":operation:(edit grep pw session)" ":subject:_brain_2nd"
 }
 compdef _brain brain
