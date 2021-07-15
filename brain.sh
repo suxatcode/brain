@@ -62,24 +62,12 @@ __brain_pw_edit () {
   local __brain_roots=$__brain_pw_roots __brain_suffix=$__brain_pw_suffix
   __brain_root_edit "$@"
 }
-__brain_pw_ls () {
-  ls --color=auto -lhB $__brain_pw_roots
-}
-__brain_ls () {
-  local f=__brain_"$1"_ls
-  if functions|grep -q $f; then
-    $f
-  else
-    echo "brain: not found"
-  fi
-}
 brain () {
   if [[ $# -eq 0 ]]; then
     echo "brain"
     echo "  e|edit <file>     search brain for lan.<file>/<file.lang an open it"
     echo "  n|new <file>      ???"
     echo "  pw|intl <file>    search brain for <file>.pw"
-    echo "  l|ls <region>       list brain <region> content"
     return 0
   fi
   local arg1="$1"
@@ -90,9 +78,27 @@ brain () {
     greplang "$@"
   elif [[ "$arg1" =~ '^(pw|intl)$' ]]; then
     __brain_pw_edit "$@"
-  elif [[ "$arg1" =~ '^(l|ls)$' ]]; then
-    __brain_ls "$@"
   elif [[ "$arg1" =~ '^(n|new)$' ]]; then
     echo "hippocampus: long term memory failure"
   fi
 }
+
+# completion!
+_echo_line () {
+  echo "ctx=$context state=$state statedescr=$state_descr line=$line"
+}
+_brain_2nd () {
+  if [[ "$line" =~ '.*(pw|intl).*' ]]; then
+    _values 'intl files' $(ls $__brain_pw_roots/*.pw\
+      |sed -e "s,$__brain_pw_roots/,,g"\
+      |sed -e "s,\(.*\).pw,\1,g")
+  else
+    #_echo_line
+  fi
+}
+_brain () {
+  local context state state_descr line
+  typeset -A opt_args
+  _arguments ":operation:(edit grep intl pw)" ":subject:_brain_2nd"
+}
+compdef _brain brain
