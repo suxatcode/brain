@@ -9,7 +9,7 @@ todo () {
   # special comments found in program source
   local re_notes='\<\(TODO\|NOTE\|FIXME\|XXX\|HELP\|WTF\)\>'
   # default todofile
-  local todofile=$HOME/todo
+  local todofile=$HOME/0x/todo
   if [[ $1 =~ '^(-?p|(--)?pj|(--)?pwd|\.)$' ]]; then
     grep --color=auto -rn $grep_excludes[@] $re_notes .
   elif [[ $1 =~ '^(-?e|(--)?edit)$' ]]; then
