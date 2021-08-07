@@ -13,7 +13,11 @@ _grepLangInit () {
 }
 _grepLangAndTodoFiles () {
   local IFS=$'\n'
-  local langfiles=($(find $_grepLangSearchPATH -regex ".*/$__brain_suffix[^/]*[^~]$\|.*$__brain_suffix$" -type f))
+  local findargs=(
+    -type f
+    -not -wholename '*/.stversions/*'
+  )
+  local langfiles=($(find $_grepLangSearchPATH -regex ".*/$__brain_suffix"'[^/]*[^~]$\|.*'"$__brain_suffix$" $findargs))
   local todos=($(find $_grepLangSearchPATH -name "todo" -type f))
   for t in $todos; do langfiles+=$t; done
   _grepLangGrep "$@" ${langfiles[@]}
