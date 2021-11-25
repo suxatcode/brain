@@ -72,11 +72,26 @@ __brain_log_file="$HOME/z/priv/misc/mind/log"
 __brain_log () {
   vim "$__brain_log_file"
 }
+__brain_human_root=$HOME/z/priv/misc/contact
+__brain_human_files () {
+  for f in $(find $__brain_human_root -type f -not \( -name '*~' -or -name '*.vcf' \) ); do
+    echo ${f#$__brain_human_root/}
+  done
+}
+__brain_human_edit () {
+  local file="$HOME/z/priv/misc/contact/$1"
+  vim "$file"
+  local files=$(__brain_human_files)
+}
+__brain_human () {
+  __brain_human_edit "$@"
+}
 brain () {
   if [[ $# -eq 0 ]]; then
     echo "brain"
     echo "  e|edit <file>     search brain for lan.<file>/<file.lang an open it"
     echo "  n|new <file>      ???"
+    echo "  c|contact <name>  search brain for humans"
     echo "  pw <file>         search brain for <file>.pw"
     echo "  l|log             edit log"
     return 0
@@ -93,6 +108,8 @@ brain () {
     __brain_session "$@"
   elif [[ "$arg1" =~ '^(n|new)$' ]]; then
     echo "hippocampus: long term memory failure"
+  elif [[ "$arg1" =~ '^(c|contact)$' ]]; then
+    __brain_human "$@"
   elif [[ "$arg1" =~ '^(l|log)$' ]]; then
     __brain_log "$@"
   fi
@@ -111,6 +128,8 @@ _brain_2nd () {
     _values 'sessions' $(ls $__brain_session_dir/*.vim\
       |sed -e "s,$__brain_session_dir/,,g"\
       |sed -e "s,\(.*\).vim,\1,g")
+  elif [[ "$line" =~ '.*(contact).*' ]]; then
+    _values 'contact humans' $(__brain_human_files)
   else
     #_echo_line
   fi
@@ -119,6 +138,6 @@ _brain () {
   local context state state_descr line
   typeset -A opt_args
   #local operations=(":edit:edit brain's content" ":grep:" ":pw:")
-  _arguments ":operation:(edit grep pw session log)" ":subject:_brain_2nd"
+  _arguments ":operation:(edit grep pw session log contact)" ":subject:_brain_2nd"
 }
 compdef _brain brain
