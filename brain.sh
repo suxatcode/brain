@@ -75,13 +75,13 @@ __brain_log () {
 __brain_human_root=$HOME/z/priv/misc/contact
 __brain_human_files () {
   for f in $(find $__brain_human_root -type f -not \( -name '*~' -or -name '*.vcf' \) ); do
-    echo ${f#$__brain_human_root/}
+    echo "${f#$__brain_human_root/}"
   done
 }
 __brain_human_edit () {
   local file="$HOME/z/priv/misc/contact/$1"
   vim "$file"
-  local files=$(__brain_human_files)
+  #local files=$(__brain_human_files)
 }
 __brain_human () {
   __brain_human_edit "$@"
