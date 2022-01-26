@@ -8,8 +8,6 @@ _grepLangGrep () {
 }
 _grepLangInit () {
   _grepLangSearchPATH=( "$@" )
-  _grepLangExtraFiles=()
-  [ -f ~/todo ] && _grepLangExtraFiles=( ~/todo )
 }
 _grepLangAndTodoFiles () {
   local IFS=$'\n'
