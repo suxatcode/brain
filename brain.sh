@@ -68,10 +68,6 @@ __brain_session () {
   [[ -f "$sess" ]] || return 1
   vim -S "$sess"
 }
-__brain_log_file="$HOME/z/priv/misc/mind/log"
-__brain_log () {
-  vim "$__brain_log_file"
-}
 __brain_human_root=$HOME/z/priv/misc/contact
 __brain_human_files () {
   for f in $(find $__brain_human_root -type f -not \( -name '*~' -or -name '*.vcf' \) ); do
@@ -93,7 +89,6 @@ brain () {
     echo "  n|new <file>      ???"
     echo "  c|contact <name>  search brain for humans"
     echo "  pw <file>         search brain for <file>.pw"
-    echo "  l|log             edit log"
     return 0
   fi
   local arg1="$1"
@@ -110,8 +105,6 @@ brain () {
     echo "hippocampus: long term memory failure"
   elif [[ "$arg1" =~ '^(c|contact)$' ]]; then
     __brain_human "$@"
-  elif [[ "$arg1" =~ '^(l|log)$' ]]; then
-    __brain_log "$@"
   fi
 }
 
@@ -138,6 +131,6 @@ _brain () {
   local context state state_descr line
   typeset -A opt_args
   #local operations=(":edit:edit brain's content" ":grep:" ":pw:")
-  _arguments ":operation:(edit grep pw session log contact)" ":subject:_brain_2nd"
+  _arguments ":operation:(edit grep pw session contact)" ":subject:_brain_2nd"
 }
 compdef _brain brain
