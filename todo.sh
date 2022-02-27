@@ -7,11 +7,12 @@ todo () {
     --binary-files=without-match
   )
   # special comments found in program source
-  local re_notes='\<\(TODO\|NOTE\|FIXME\|XXX\|HELP\|WTF\)\>'
+  local re_notes='\<\(TODO\|NOTE\|FIXME\|XXX\|HELP\|WTF\|CONTINUE\)\>'
   # default todofile
   local todofile=$HOME/0x/todo
   if [[ $1 =~ '^(-?p|(--)?pj|(--)?pwd|\.)$' ]]; then
-    grep --color=auto -rn $grep_excludes[@] $re_notes .
+    shift
+    grep --color=auto -rn $grep_excludes[@] $re_notes . "$@"
   elif [[ $1 =~ '^(-?e|(--)?edit)$' ]]; then
     vim $todofile
   else

@@ -8,9 +8,9 @@ source "$cwd/grep.sh"
 __brain_find_file_in_path () {
   #echo "[d] __brain_find_file_in_path $@" >&2
   local root="$1" q="$2"
-  local f=($(find "$root" -name "$__brain_suffix.$q" -or -name "$q.$__brain_suffix")) # try exact matches first
+  local f=($(find "$root" \( -name "$__brain_suffix.$q" -or -name "$q.$__brain_suffix" \) -and -not -wholename '*/.stversions/*' )) # try exact matches first
   if [[ $#f -eq 0 ]]; then
-    f=($(find "$root" -name "*$q*.$__brain_suffix" -or -name "$__brain_suffix.*$q*")) # try non-complete matches
+    f=($(find "$root" \( -name "*$q*.$__brain_suffix" -or -name "$__brain_suffix.*$q*" \) -and -not -wholename '*/.stversions/*' )) # try non-complete matches
   fi
   # TODO: fuzzy machtes?
   echo "${(j/:/)f}"
