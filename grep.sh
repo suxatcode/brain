@@ -14,6 +14,8 @@ _grepLangAndTodoFiles () {
   local findargs=(
     -type f
     -not -wholename '*/.stversions/*'
+    -not -wholename '*/docker-data/*'
+    -not -wholename '*/node_modules/*'
   )
   local langfiles=($(find $_grepLangSearchPATH -regex ".*/$__brain_suffix"'[^/]*[^~]$\|.*'"$__brain_suffix$" $findargs))
   local todos=($(find $_grepLangSearchPATH -name "todo" -type f))

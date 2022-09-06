@@ -133,4 +133,4 @@ _brain () {
   #local operations=(":edit:edit brain's content" ":grep:" ":pw:")
   _arguments ":operation:(edit grep pw session contact)" ":subject:_brain_2nd"
 }
-compdef _brain brain
+which compdef >/dev/null && compdef _brain brain
