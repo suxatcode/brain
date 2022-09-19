@@ -75,19 +75,15 @@ __brain_root_edit () {
   fi
   "$EDITOR" "$f"
 }
-__brain_pw_roots=($HOME/z/priv/misc/intl)
-__brain_pw_suffix=pw
 __brain_pw_edit () {
   local __brain_roots=$__brain_pw_roots __brain_suffix=$__brain_pw_suffix
   __brain_root_edit "$@"
 }
-__brain_session_dir=$__brain_roots[1]/vim
 __brain_session () {
   local sess="$__brain_session_dir/$1.vim"
   [[ -f "$sess" ]] || return 1
   vim -S "$sess"
 }
-__brain_human_root=$HOME/z/priv/misc/contact
 __brain_human_files () {
   for f in $(find $__brain_human_root -type f -not \( -name '*~' -or -name '*.vcf' \) ); do
     echo "${f#$__brain_human_root/}"
@@ -96,7 +92,6 @@ __brain_human_files () {
 __brain_human_edit () {
   local file="$HOME/z/priv/misc/contact/$1"
   vim "$file"
-  #local files=$(__brain_human_files)
 }
 __brain_human () {
   __brain_human_edit "$@"
@@ -121,14 +116,14 @@ brain () {
   elif [[ "$arg1" =~ '^(session)$' ]]; then
     __brain_session "$@"
   elif [[ "$arg1" =~ '^(n|new)$' ]]; then
-    echo "hippocampus: long term memory failure"
+    echo "hippocampus: long term memory failure" # XXX: implement? no need right now
   elif [[ "$arg1" =~ '^(c|contact)$' ]]; then
     __brain_human "$@"
   fi
 }
 
 # completion!
-_echo_line () {
+__brain_echo_line () {
   echo "ctx=$context state=$state statedescr=$state_descr line=$line"
 }
 _brain_2nd () {
@@ -143,12 +138,11 @@ _brain_2nd () {
   elif [[ "$line" =~ '.*(contact).*' ]]; then
     _values 'contact humans' $(__brain_human_files)
   else
-    #_echo_line
+    #__brain_echo_line
   fi
 }
 _brain () {
   local context state state_descr line
   typeset -A opt_args
-  #local operations=(":edit:edit brain's content" ":grep:" ":pw:")
   _arguments ":operation:(edit grep pw session contact)" ":subject:_brain_2nd"
 }
