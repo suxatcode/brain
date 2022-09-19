@@ -5,21 +5,37 @@ source "$cwd/conf.sh"
 source "$cwd/grep.sh"
 
 # LANGUAGE
+__brain_directory_ignores=(.stversions docker-data node_modules)
+# TODO: fuzzy machtes?
+__brain_find_file__find () {
+  local root="$1" q="$2"
+  local opts=($(printf ' -and -not -wholename "*/%s/*" ' "${__brain_directory_ignores[@]}"))
+  local f=($(find "$root" \( -name "$__brain_suffix.$q" -or -name "$q.$__brain_suffix" \) $opts ))
+  if [[ $#f -eq 0 ]]; then
+    f=($(find "$root" \( -name "*$q*.$__brain_suffix" -or -name "$__brain_suffix.*$q*" \) $opts ))
+  fi
+  echo "${(j/:/)f}"
+  [[ $#f -eq 1 ]] || return 1
+}
+__brain_find_file__fd () {
+  local root="$1" q="$2"
+  local opts=($(printf ' -E "%s" ' "${__brain_directory_ignores[@]}"))
+  local f=($(fd $opts "$__brain_suffix.$q|$q.$__brain_suffix" "$root"))
+  if [[ $#f -eq 0 ]]; then
+    f=($(fd $opts "$__brain_suffix.$q.*|$q.*.$__brain_suffix" "$root"))
+  fi
+  echo "${(j/:/)f}"
+  [[ $#f -eq 1 ]] || return 1
+}
 __brain_find_file_in_path () {
   #echo "[d] __brain_find_file_in_path $@" >&2
   local root="$1" q="$2"
-  local directory_ignores=(.stversions docker-data node_modules)
-  local opts=($(printf ' -and -not -wholename "*/%s/*" ' "${directory_ignores[@]}"))
-  #local dirss=(`echo $(printf ' -name "%s" ' "${directory_ignores[@]}")`)
-  #local opts=('(' '-type' 'd' '-and' '(' ${dirss} ')' '-prune' ')' '-o')
-  local f=($(find "$root" \( -name "$__brain_suffix.$q" -or -name "$q.$__brain_suffix" \) $opts )) # try exact matches first
-  if [[ $#f -eq 0 ]]; then
-    f=($(find "$root" \( -name "*$q*.$__brain_suffix" -or -name "$__brain_suffix.*$q*" \) $opts )) # try non-complete matches
+  if which fd >/dev/null; then
+    __brain_find_file__fd "$root" "$q"
+  else
+    __brain_find_file__find "$root" "$q"
   fi
-  # TODO: fuzzy machtes?
-  echo "${(j/:/)f}"
-  [[ $#f -eq 1 ]] || return 1
-  return 0
+  return $?
 }
 __brain_find_all () {
   local all=$(__brain_find_file "")
