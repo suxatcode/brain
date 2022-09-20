@@ -1,12 +1,13 @@
 Describe 'brain_functions.sh:'
-  Include './brain_functions.sh'
+  Include './brain_functions.sh' # TODO: should only include find.sh
   setup() {
-    mkdir -p ./testdata/{.stversions,ok}
+    mkdir -p ./testdata/{.stversions,ok,all}
     touch ./testdata/a.lang
     touch ./testdata/borc.lang
     touch ./testdata/Xborc.lang
     touch ./testdata/cord.lang
     touch ./testdata/{.stversions/,ok/}def.lang
+    touch ./testdata/all/{x,y,z}.lang
   }
   cleanup() {
     rm -r ./testdata;
@@ -59,5 +60,21 @@ Describe 'brain_functions.sh:'
     #  The output should equal './testdata/ok/def.lang'
     #  The status should be success
     #End
+  End
+
+  Describe '__brain_find_all:'
+    __brain_set_roots "./testdata/all"
+    It 'finds all the brain files'
+      When call __brain_find_all complete_path
+      The output should equal './testdata/all/x.lang
+./testdata/all/y.lang
+./testdata/all/z.lang'
+    End
+    It 'finds all the brain files'
+      When call __brain_find_all
+      The output should equal 'x.lang
+y.lang
+z.lang'
+    End
   End
 End
