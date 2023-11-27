@@ -8,6 +8,7 @@ Describe 'brain_functions.sh:'
     touch ./testdata/cord.lang
     touch ./testdata/{.stversions/,ok/}def.lang
     touch ./testdata/all/{x,y,z}.lang
+    echo AAAqwertyAAA > ./testdata/all/y.lang
   }
   cleanup() {
     rm -r ./testdata;
@@ -75,6 +76,18 @@ Describe 'brain_functions.sh:'
       The output should equal 'x.lang
 y.lang
 z.lang'
+    End
+  End
+
+  Describe '__brain_find_file__fd:'
+    _grepLangInit "./testdata/all"
+    It 'finds all the brain files'
+      When call _grepFindFilesToGrep
+      The output should equal './testdata/all/x.lang ./testdata/all/y.lang ./testdata/all/z.lang'
+    End
+    It 'finds greps the brain'
+      When call _grepLangAndTodoFiles qwerty
+      The output should equal './testdata/all/y.lang:1:AAAqwertyAAA'
     End
   End
 End

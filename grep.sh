@@ -10,7 +10,7 @@ _grepLangGrep () {
 _grepLangInit () {
   _grepLangSearchPATH=( "$@" )
 }
-_grepLangAndTodoFiles () {
+_grepFindFilesToGrep () {
   local IFS=$'\n'
   local findargs=(
     -type f
@@ -18,11 +18,15 @@ _grepLangAndTodoFiles () {
     -not -wholename '*/docker-data/*'
     -not -wholename '*/node_modules/*'
   )
-  # TODO: add shellspec tests & reuse find.sh functions
+  # TODO: reuse find.sh functions
   local langfiles=($(find $_grepLangSearchPATH -regex ".*/$__brain_suffix"'[^/]*[^~]$\|.*'"$__brain_suffix$" $findargs))
   local todos=($(find $_grepLangSearchPATH -name "todo" -type f))
   for t in $todos; do langfiles+=$t; done
-  _grepLangGrep "$@" ${langfiles[@]}
+  #echo "XXX $langfiles" >&2
+  echo "${langfiles[@]}"
+}
+_grepLangAndTodoFiles () {
+  _grepLangGrep "$@" $(_grepFindFilesToGrep)
 }
 grepz () {
   _grepLangInit $__brain_roots[2]
