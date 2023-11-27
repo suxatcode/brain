@@ -33,7 +33,7 @@ __brain_pw_edit () {
 __brain_session () {
   local sess="$__brain_session_dir/$1.vim"
   [[ -f "$sess" ]] || return 1
-  vim -S "$sess"
+  $EDITOR -S "$sess"
 }
 __brain_human_files () {
   for f in $(find $__brain_human_root -type f -not \( -name '*~' -or -name '*.vcf' \) ); do
@@ -42,7 +42,7 @@ __brain_human_files () {
 }
 __brain_human_edit () {
   local file="$HOME/z/priv/misc/contact/$1"
-  vim "$file"
+  $EDITOR "$file"
 }
 __brain_human () {
   __brain_human_edit "$@"
