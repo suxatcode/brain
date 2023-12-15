@@ -5,6 +5,7 @@ todo () {
   local grep_excludes=(
     --exclude='*~' --exclude='*.swp' --exclude-dir=.git
     --binary-files=without-match
+    --exclude-dir=docker-data
   )
   # special comments found in program source
   local re_notes='\<\(TODO\|NOTE\|FIXME\|XXX\|HELP\|WTF\|CONTINUE\)\>'
