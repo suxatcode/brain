@@ -15,7 +15,7 @@ __brain_find_file__find () {
 __brain_find_file__fd () {
   local root="$1" q="$2"
   local opts=($(printf ' -E "%s" ' "${__brain_directory_ignores[@]}"))
-  local f=($(fd $opts "^($__brain_suffix\.$q|$q\.$__brain_suffix)" "$root"))
+  local f=($(fd $opts "^($__brain_suffix\.$q|$q\.$__brain_suffix)$" "$root"))
   if [[ $#f -eq 0 ]]; then
     f=($(fd $opts "^(${__brain_suffix}\.${q}[^/]*|${q}[^/]*\.${__brain_suffix})" "$root"))
   fi
